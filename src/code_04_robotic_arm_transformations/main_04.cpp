@@ -110,11 +110,15 @@ int main(int argc, char** argv) {
     glm::mat4 t_f = glm::translate(glm::vec3(20, 0, 0));
 
     glm::mat4 s_w = glm::scale(glm::vec3(6, 6, 1));
+    glm::mat4 s_t = glm::scale(glm::vec3(8, 2, 1));
+    glm::mat4 t_t = glm::translate(glm::vec3(8, 0, 0));
 
     glm::mat4 W = glm::translate(glm::vec3(30, 0, 0));
 
     glm::mat4 E = glm::translate(glm::vec3(40, 0, 0));
-    alpha_S,alpha_E ,alpha_W= 0.0;
+
+    glm::mat4 T = glm::translate(glm::vec3(6, 0, 0));
+    alpha_S = alpha_E = alpha_W = 0.0f;
 
     matrix_stack stack;
 
@@ -186,15 +190,29 @@ int main(int argc, char** argv) {
         glDrawElements(quad().mode, quad().count, quad().itype, NULL);
 
 
+        // wrist fame
+        stack.mult(W * r_W);
         stack.push();
-        // wrist
-        stack.mult(W * r_W * s_w);
-        glUniformMatrix4fv(s["uM"], 1, GL_FALSE, glm::value_ptr(stack.m()));
-        stack.pop();
 
+        // Wrist
+        stack.mult(s_w);
+        glUniformMatrix4fv(s["uM"], 1, GL_FALSE, glm::value_ptr(stack.m()));
         glUniform3f(s["uCol"], 0.4, 0.5, 0.0);
         quad.bind();
         glDrawElements(quad().mode, quad().count, quad().itype, NULL);
+        stack.pop();
+
+        stack.push();
+
+        //thumb
+        stack.mult(T);
+        stack.mult(t_t * s_t);
+        glUniformMatrix4fv(s["uM"], 1, GL_FALSE, glm::value_ptr(stack.m()));
+
+        glUniform3f(s["uCol"], 0.8, 0.8, 0.0);
+        quad.bind();
+        glDrawElements(quad().mode, quad().count, quad().itype, NULL);
+        stack.pop();
 
 
         stack.pop();
