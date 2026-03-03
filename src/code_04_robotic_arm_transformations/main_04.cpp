@@ -131,7 +131,7 @@ int main(int argc, char** argv) {
         glm::mat4 r_E = glm::rotate(alpha_E, glm::vec3(0, 0, 1));
         glm::mat4 r_W = glm::rotate(alpha_W, glm::vec3(0, 0, 1));
 
-		glm::mat4 r = glm::rotate(alpha+=0.01, glm::vec3(0, 1, 0));
+		glm::mat4 r = glm::rotate(alpha+=0.0005, glm::vec3(0, 1, 0));
 
         /* Render here */
         glClearColor(0.2, 0.2, 0.2, 1);
