@@ -7,6 +7,13 @@
       "project": "CMakeLists.txt",
       "projectTarget": "code_00_raytracer.exe (src\\code_00_raytracer\\code_00_raytracer.exe)",
       "name": "code_00_raytracer.exe (src\\code_00_raytracer\\code_00_raytracer.exe)"
+    },
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "code_04_robotic_arm_transformations.exe (src\\code_04_robotic_arm_transformations\\code_04_robotic_arm_transformations.exe)",
+      "name": "code_04_robotic_arm_transformations.exe (src\\code_04_robotic_arm_transformations\\code_04_robotic_arm_transformations.exe)",
+      "currentDir": "${workspaceRoot}\\src\\code_04_robotic_arm_transformations"
     }
   ]
 }
