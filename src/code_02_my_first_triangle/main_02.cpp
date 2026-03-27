@@ -1,356 +1,14 @@
-//#include <glad/glad.h>
-//#include <GLFW/glfw3.h>
-//#include <iostream>
-//#include "../common/debugging.h"
-//
-//
-//
-//int main(int argc, char** argv) {
-//
-//	GLFWwindow* window;
-//
-//    /* Initialize the library */
-//    if (!glfwInit())
-//        return -1;
-//
-//
-//    // Request OpenGL 4.1
-//    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-//    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-//
-//    // Ask specifically for the core profile (recommended)
-//    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-//
-//    // macOS requires this for 3.2+ contexts
-//    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-//
-//
-//    /* Create a windowed mode window and its OpenGL context */
-//    window = glfwCreateWindow(512, 512, "code_02_my_first_triangle", NULL, NULL);
-//
-//
-//    if (!window)
-//    {
-//        glfwTerminate();
-//        return -1;
-//    }
-//
-//    /* Make the window's context current */
-//    glfwMakeContextCurrent(window); 
-//
-//
-//    // Load GL symbols *after* the context is current
-//    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-//        std::fprintf(stderr, "Failed to initialize GLAD\n");
-//        glfwDestroyWindow(window);
-//        glfwTerminate();
-//        return EXIT_FAILURE;
-//    }
-//
-//
-//    /* query for the hardware and software specs and print the result on the console*/
-//    printout_opengl_glsl_info();
-//
-//    ///* create render data in RAM */
-//    GLuint positionAttribIndex = 0;
-//    float positions[] = { 0.0, 0.0,  // 1st vertex
-//                          0.5, 0.0,  // 2nd vertex
-//                          0.5, 0.5,  // 3rd vertex  
-//                          0.0, 0.5   // 4th vertex
-//    };
-//
-//
-//    ///* create  a vertex array object */
-//    GLuint va;
-//    glGenVertexArrays(1, &va);
-//    glBindVertexArray(va);
-//
-//    ///* create a buffer for the render data in video RAM */
-//    GLuint positionsBuffer;
-//    glGenBuffers(1, &positionsBuffer);
-//    glBindBuffer(GL_ARRAY_BUFFER, positionsBuffer);
-//
-//    ///* declare what data in RAM are filling the bufferin video RAM */
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8, positions, GL_STATIC_DRAW);
-//
-//    glEnableVertexAttribArray(positionAttribIndex);
-//    ///* specify the data format */
-//    glVertexAttribPointer(positionAttribIndex, 2, GL_FLOAT, false, 0, 0);
-//
-//    ///* create render data in RAM */
-//    GLuint colorAttribIndex = 1;
-//    float colors[] = {  1.0, 0.0, 0.0,    // 1st vertex's color
-//                        0.0, 1.0, 0.0,   // 2nd vertex's color
-//                        0.0, 0.0, 1.0,
-//                        1.0, 1.0, 1.0
-//                    };
-//
-//    ///* create a buffer for the render data in video RAM */
-//    GLuint colorBuffer;
-//    glGenBuffers(1, &colorBuffer);
-//    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-//
-//    ///* declare what data in RAM are filling the bufferin video RAM */
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12, colors, GL_STATIC_DRAW);
-//
-//    glEnableVertexAttribArray(colorAttribIndex);
-//    ///* specify the data format */
-//    glVertexAttribPointer(colorAttribIndex, 3, GL_FLOAT, false, 0, 0);
-//
-//    GLuint indices[] = { 0,1,2,0,2,3 };
-//    GLuint indexBuffer;
-//    glGenBuffers(1, &indexBuffer);
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * 6, indices, GL_STATIC_DRAW);
-//
-//
-//    ///* create a vertex shader */
-//    std::string  vertex_shader_src = "#version 410\n \
-//        in vec2 aPosition;\
-//        in vec3 aColor;\
-//        out vec3 vColor;\
-//        uniform float uDelta;\
-//        void main(void)\
-//        {\
-//         gl_Position = vec4(aPosition+vec2(uDelta,0.0), 0.0, 1.0);\
-//         vColor = aColor;\
-//        }\
-//       ";
-//    const GLchar* vs_source = (const GLchar*)vertex_shader_src.c_str();
-//    GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-//    glShaderSource(vertex_shader, 1, &vs_source, NULL);
-//    glCompileShader(vertex_shader);
-//  
-//
-//    ///* create a fragment shader */
-//    std::string   fragment_shader_src = "#version 410 \n \
-//        layout (location = 0) out vec4 color;\
-//        in vec3 vColor;\
-//        uniform float uDelta;\
-//        void main(void)\
-//        {\
-//            color = vec4(vColor+vec3(uDelta,0.0,0.0), 1.0);\
-//        }";
-//    const GLchar* fs_source = (const GLchar*)fragment_shader_src.c_str();
-//    
-//    GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-//    glShaderSource(fragment_shader, 1, &fs_source, NULL);
-//    glCompileShader(fragment_shader);
-//    
-//
-//    GLuint program_shader = glCreateProgram();
-//    glAttachShader(program_shader, vertex_shader);
-//    glAttachShader(program_shader, fragment_shader);
-//     
-//    glBindAttribLocation(program_shader, positionAttribIndex, "aPosition");
-//    glBindAttribLocation(program_shader, colorAttribIndex, "aColor");
-//    glLinkProgram(program_shader);
-//   
-//
-//    GLint linked;
-//    validate_shader_program(program_shader);
-//    glGetProgramiv(program_shader, GL_LINK_STATUS, &linked);
-//    if (linked) {
-//        glUseProgram(program_shader);
-//    }
-//    
-//    GLint loc = glGetUniformLocation(program_shader, "uDelta");
-//
-//    /* cal glGetError and print out the result in a more verbose style
-//    * __LINE__ and __FILE__ are precompiler directive that replace the value with the
-//    * line and file of this call, so you know where the error happened
-//    */
-//    check_gl_errors(__LINE__, __FILE__);
-//
-//    float d = 0.01;
-//    float delta = 0;
-//
-//    glClearColor(0.2, 0.2, 0.2, 1);
-//    while (!glfwWindowShouldClose(window))
-//    {
-//        if (delta < 0 || delta > 0.5)
-//            d = -d;
-//        delta += d;
-//
-//        glUniform1f(loc, delta);
-//
-//        /* Render here */
-//        
-//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//       
-//        // glDrawArrays(GL_TRIANGLES, 0, 6);
-//        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
-//
-//        /* Swap front and back buffers */
-//        glfwSwapBuffers(window);
-//
-//        /* Poll for and process events */
-//        glfwPollEvents();
-//    }
-//
-//    glfwTerminate();
-//
-//	return 0;
-//}
+/*
+    l'obiettivo ï¿½ creare un quadrato vuoto (di cui
+    viene disegnato solo il perimetro).
+    Gli si aggiunge uno spostamento e una variazione di colore come visto a
+    lezione.
+    --> uso i segmenti invece dei triangoli
+*/
 
-//#include <glad/glad.h>
-//#include <GLFW/glfw3.h>
-//#include <iostream>
-//#include "../common/debugging.h"
-//
-//int main(int argc, char** argv) {
-//
-//    GLFWwindow* window;
-//
-//    if (!glfwInit())
-//        return -1;
-//
-//    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-//    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-//    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-//    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-//
-//    window = glfwCreateWindow(512, 512, "code_02_interleaved_buffer", NULL, NULL);
-//
-//    if (!window) {
-//        glfwTerminate();
-//        return -1;
-//    }
-//
-//    glfwMakeContextCurrent(window);
-//
-//    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-//        std::fprintf(stderr, "Failed to initialize GLAD\n");
-//        glfwDestroyWindow(window);
-//        glfwTerminate();
-//        return EXIT_FAILURE;
-//    }
-//
-//    printout_opengl_glsl_info();
-//
-//    // --- PUNTO A: RIORGANIZZAZIONE ARRAY IN RAM (INTERLEAVED) ---
-//    // Struttura: Posizione (X, Y) | Colore (R, G, B)
-//    float vertices[] = {
-//        0.0f, 0.0f,  1.0f, 0.0f, 0.0f,  // Vertice 0: Rosso
-//        0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // Vertice 1: Verde
-//        0.5f, 0.5f,  0.0f, 0.0f, 1.0f,  // Vertice 2: Blu
-//        0.0f, 0.5f,  1.0f, 1.0f, 1.0f   // Vertice 3: Bianco
-//    };
-//
-//    GLuint indices[] = { 0, 1, 2, 0, 2, 3 };
-//
-//    // --- PUNTO B: UN SOLO ARRAY BUFFER IN VRAM ---
-//    GLuint va;
-//    glGenVertexArrays(1, &va);
-//    glBindVertexArray(va);
-//
-//    GLuint vbo;
-//    glGenBuffers(1, &vbo);
-//    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-//    // Carichiamo l'intero array 'vertices' che contiene sia posizioni che colori
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-//
-//    // EBO per gli indici (rimane invariato)
-//    GLuint indexBuffer;
-//    glGenBuffers(1, &indexBuffer);
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-//
-//    // --- PUNTO C: CAMBIARE STRIDE E OFFSET ---
-//    GLuint positionAttribIndex = 0;
-//    GLuint colorAttribIndex = 1;
-//
-//    // Lo stride è la distanza tra l'inizio di un vertice e il successivo:
-//    // 2 float (pos) + 3 float (colore) = 5 float totali
-//    GLsizei stride = 5 * sizeof(float);
-//
-//    // Configurazione Posizione (Inizia all'offset 0)
-//    glEnableVertexAttribArray(positionAttribIndex);
-//    glVertexAttribPointer(positionAttribIndex, 2, GL_FLOAT, GL_FALSE, stride, (void*)0);
-//
-//    // Configurazione Colore (Inizia dopo i 2 float della posizione)
-//    glEnableVertexAttribArray(colorAttribIndex);
-//    glVertexAttribPointer(colorAttribIndex, 3, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
-//
-//
-//
-//    // --- SHADERS (Invariati) ---
-//    std::string vertex_shader_src = "#version 410\n \
-//        in vec2 aPosition;\
-//        in vec3 aColor;\
-//        out vec3 vColor;\
-//        uniform float uDelta;\
-//        void main(void)\
-//        {\
-//         gl_Position = vec4(aPosition+vec2(uDelta,0.0), 0.0, 1.0);\
-//         vColor = aColor;\
-//        }\
-//       ";
-//
-//    std::string fragment_shader_src = "#version 410 \n \
-//        layout (location = 0) out vec4 color;\
-//        in vec3 vColor;\
-//        uniform float uDelta;\
-//        void main(void)\
-//        {\
-//            color = vec4(vColor+vec3(uDelta,0.0,0.0), 1.0);\
-//        }";
-//
-//    // Compilazione e Linking (Semplificato per brevità)
-//    const GLchar* vs_source = (const GLchar*)vertex_shader_src.c_str();
-//    GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-//    glShaderSource(vertex_shader, 1, &vs_source, NULL);
-//    glCompileShader(vertex_shader);
-//
-//    const GLchar* fs_source = (const GLchar*)fragment_shader_src.c_str();
-//    GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-//    glShaderSource(fragment_shader, 1, &fs_source, NULL);
-//    glCompileShader(fragment_shader);
-//
-//    GLuint program_shader = glCreateProgram();
-//    glAttachShader(program_shader, vertex_shader);
-//    glAttachShader(program_shader, fragment_shader);
-//    glBindAttribLocation(program_shader, positionAttribIndex, "aPosition");
-//    glBindAttribLocation(program_shader, colorAttribIndex, "aColor");
-//    glLinkProgram(program_shader);
-//
-//    glUseProgram(program_shader);
-//    GLint loc = glGetUniformLocation(program_shader, "uDelta");
-//
-//    check_gl_errors(__LINE__, __FILE__);
-//
-//    float d = 0.01f;
-//    float delta = 0.0f;
-//
-//    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-//
-//    // --- LOOP DI RENDERING ---
-//    while (!glfwWindowShouldClose(window))
-//    {
-//        if (delta < 0 || delta > 0.5) d = -d;
-//        delta += d;
-//
-//        glUniform1f(loc, delta);
-//
-//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//
-//        // Il comando di disegno non cambia: usa gli indici per pescare dal buffer interleaved
-//        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
-//
-//        glfwSwapBuffers(window);
-//        glfwPollEvents();
-//    }
-//
-//    glfwTerminate();
-//    return 0;
-//}
-
+#include <cstdlib>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
-#include <vector>
-#include <string>
-#include <cstring>
 #include "../common/debugging.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
@@ -363,7 +21,8 @@ int numIndices = 0;
  * Funzione che crea una griglia di rettangoli (suddivisi in triangoli)
  * nello spazio Normalized Device Coordinates (da -1 a 1).
  */
-void create_box2d(int xsize, int ysize) {
+void create_box2d(int xsize, int ysize)
+{
     std::vector<float> vertices;
     std::vector<GLuint> indices;
 
@@ -371,8 +30,10 @@ void create_box2d(int xsize, int ysize) {
     float dy = 2.0f / (float)ysize;
 
     // 1. Generazione Vertici (Interleaved: Posizione x,y + Colore r,g,b)
-    for (int j = 0; j <= ysize; ++j) {
-        for (int i = 0; i <= xsize; ++i) {
+    for (int j = 0; j <= ysize; ++j)
+    {
+        for (int i = 0; i <= xsize; ++i)
+        {
             // Coordinate posizione da -1.0 a 1.0
             float x = -1.0f + i * dx;
             float y = -1.0f + j * dy;
@@ -388,8 +49,10 @@ void create_box2d(int xsize, int ysize) {
 
     // 2. Generazione Indici
     // Ogni cella (rettangolo) ha 4 vertici. Indice = riga * (numero_colonne + 1) + colonna
-    for (int j = 0; j < ysize; ++j) {
-        for (int i = 0; i < xsize; ++i) {
+    for (int j = 0; j < ysize; ++j)
+    {
+        for (int i = 0; i < xsize; ++i)
+        {
             GLuint bottomLeft = j * (xsize + 1) + i;
             GLuint bottomRight = bottomLeft + 1;
             GLuint topLeft = (j + 1) * (xsize + 1) + i;
@@ -425,121 +88,288 @@ void create_box2d(int xsize, int ysize) {
     GLsizei stride = 5 * sizeof(float);
     // Posizione (location 0)
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, stride, (void*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, stride, (void *)0);
     // Colore (location 1)
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void *)(2 * sizeof(float)));
 
     glBindVertexArray(0);
 }
 
+struct MyShaders
+{
+    const char *aPos = "aPosition";
+    const char *aCol = "aColor";
+    const char *uOff = "uOffset";
 
-void save_screenshot(GLFWwindow* window, const std::string& filename) {
-    int width, height;
-    glfwGetFramebufferSize(window, &width, &height);
+    const char *vertex = R"(
+        #version 410
+        layout(location = 0) in vec2 aPosition;
+        layout(location = 1) in vec3 aColor;
+        out vec3 vColor;
+        uniform vec2 uOffset;
 
-    // Prepariamo un buffer per contenere i pixel (3 canali: R, G, B)
-    std::vector<unsigned char> pixels(3 * width * height);
+        void main()
+        {
+            gl_Position = vec4(aPosition + uOffset, 0.0, 1.0);
+            vColor = aColor;
+        }
+    )";
 
-    // Leggiamo i pixel dal buffer frontale
-    glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
+    const char *fragment = R"(
+        #version 410
+        layout(location = 0) out vec4 color;
+        in vec3 vColor;
+        uniform vec2 uOffset;
 
-    // NOTA: OpenGL legge i pixel dal basso verso l'alto (0,0 è l'angolo in basso a sinistra).
-    // Molte librerie di immagini si aspettano l'origine in alto a sinistra.
-    // Dobbiamo invertire le righe verticalmente.
-    std::vector<unsigned char> flipped_pixels(3 * width * height);
-    for (int y = 0; y < height; y++) {
-        memcpy(&flipped_pixels[y * width * 3],
-            &pixels[(height - 1 - y) * width * 3],
-            width * 3);
-    }
+        void main()
+        {
+            color = vec4(vColor * 0.5 + vec3(abs(uOffset.x), abs(uOffset.y), 0.5), 1.0);
+        }
+    )";
+};
 
-    // Salviamo in formato PNG
-    stbi_write_png(filename.c_str(), width, height, 3, flipped_pixels.data(), width * 3);
+GLFWwindow *start_window(int w, int h, const char *title)
+{
+    GLFWwindow *window;
 
-    std::cout << "Screenshot salvato come: " << filename << std::endl;
-}
+    if (!glfwInit())
+        return nullptr;
 
-int main(int argc, char** argv) {
-    if (!glfwInit()) return -1;
-
+    // Request OpenGL 4.1
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    GLFWwindow* window = glfwCreateWindow(512, 512, "Exercise: Box2D Grid", NULL, NULL);
-    if (!window) { glfwTerminate(); return -1; }
+    /* Create a windowed mode window and its OpenGL context */
+    window = glfwCreateWindow(w, h, title, NULL, NULL);
+    if (!window)
+    {
+        glfwTerminate();
+        return nullptr;
+    }
+
+    /* Make the window's context current */
     glfwMakeContextCurrent(window);
+    // Load GL symbols *after* the context is current
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        std::fprintf(stderr, "Failed to initialize GLAD\n");
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        return nullptr;
+    }
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) return -1;
+    /* query for the hardware and software specs and print the result on the console*/
+    printout_opengl_glsl_info();
 
-    // Creiamo la griglia (es. 3 colonne, 2 righe come richiesto)
-    create_box2d(3, 2);
+    return window;
+}
 
-    // Shader minimali
-    std::string vertex_shader_src = "#version 410\n"
-        "layout(location = 0) in vec2 aPosition;"
-        "layout(location = 1) in vec3 aColor;"
-        "out vec3 vColor;"
-        "void main() {"
-        "  gl_Position = vec4(aPosition, 0.0, 1.0);"
-        "  vColor = aColor;"
-        "}";
+void setup_VBO(GLuint &vbo, GLuint &posAttrInd, GLuint &colAttrInd)
+{
+    // coordinate vertici (X,Y) e colori RGB
+    posAttrInd = 0;
+    colAttrInd = 1;
 
-    std::string fragment_shader_src = "#version 410\n"
-        "in vec3 vColor;"
-        "out vec4 color;"
-        "void main() {"
-        "  color = vec4(vColor, 1.0);"
-        "}";
+    float pos_cols[] = {
+        -0.25, -0.25, 1.0, 0.0, 0.0,
+        0.25, -0.25, 0.0, 1.0, 0.0,
+        0.25, 0.25, 0.0, 0.0, 1.0,
+        -0.25, 0.25, 1.0, 1.0, 1.0};
 
-    // Compilazione e link rapido (omettendo controlli errore per brevità)
-    const GLchar* vs_ptr = vertex_shader_src.c_str();
-    const GLchar* fs_ptr = fragment_shader_src.c_str();
-    GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vs, 1, &vs_ptr, NULL);
-    glCompileShader(vs);
-    GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fs, 1, &fs_ptr, NULL);
-    glCompileShader(fs);
-    GLuint program = glCreateProgram();
-    glAttachShader(program, vs);
-    glAttachShader(program, fs);
-    glLinkProgram(program);
-    glUseProgram(program);
+    // creo un buffer in vram dove copiare i dati
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    // copio i dati e lo attivo
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 20, pos_cols, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(posAttrInd);
+    glEnableVertexAttribArray(colAttrInd);
 
-    // Se vuoi vedere la struttura dei triangoli, scommenta la riga sotto:
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // calcolo la stride
+    GLsizei stride = sizeof(float) * 5;
+    // specifico come leggere i dati
+    glVertexAttribPointer(posAttrInd, 2, GL_FLOAT, false, stride, 0);
+    glVertexAttribPointer(colAttrInd, 3, GL_FLOAT, false, stride, (void *)(sizeof(float) * 2));
+}
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+void setup_EBO(GLuint &ebo)
+{
+    // indici
+    GLuint indices[] = {0, 1, 2, 3};
+    glGenBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    // Caricamento degli indici
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * 4, indices, GL_STATIC_DRAW);
+}
 
-    bool sKeyPressed = false; // Serve a tracciare se il tasto era già premuto nel frame precedente
+GLuint setup_geometry(GLuint &vbo_pos_col, GLuint &ebo_ind, GLuint &posAttrInd, GLuint &colAttrInd)
+{
+    // creo e bindo il vao
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
 
-    while (!glfwWindowShouldClose(window)) {
-        
-        glClear(GL_COLOR_BUFFER_BIT);
+    // configuro positions e colors
+    setup_VBO(vbo_pos_col, posAttrInd, colAttrInd);
+    // configuro la lettura degli indici
+    setup_EBO(ebo_ind);
 
-        glBindVertexArray(vaoBox);
-        glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
+    // unbindo il vao (per sicurezza)
+    glBindVertexArray(0);
 
-        int currentSState = glfwGetKey(window, GLFW_KEY_S);
+    return vao;
+}
 
-        if (currentSState == GLFW_PRESS && !sKeyPressed) {
-            save_screenshot(window, "griglia_finale.png");
-            sKeyPressed = true; // Segniamo che è premuto, così al prossimo frame non rientra qui
+int link_shader_program(GLuint &ps)
+{
+    glLinkProgram(ps);
+
+    GLint linked;
+    // Validazione del programma per verificare eventuali errori di linking
+    validate_shader_program(ps);
+    glGetProgramiv(ps, GL_LINK_STATUS, &linked);
+
+    if (linked)
+    {
+        glUseProgram(ps);
+        return 0; // Successo
+    }
+    else
+    {
+        // Recupero l'errore di linking se fallisce
+        char infoLog[1024];
+        glGetProgramInfoLog(ps, 1024, NULL, infoLog);
+        std::fprintf(stderr, "ERRORE LINKING PROGRAMMA:\n%s\n", infoLog);
+        return 1; // Fallimento
+    }
+}
+
+GLuint create_shader_program(const char *vs_src, const char *fs_src)
+{
+    GLint success;
+    char infoLog[512];
+
+    // --- Compilazione Vertex Shader ---
+    GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertex_shader, 1, &vs_src, NULL);
+    glCompileShader(vertex_shader);
+
+    // Controllo errori Vertex Shader
+    glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(vertex_shader, 512, NULL, infoLog);
+        std::fprintf(stderr, "ERRORE COMPILAZIONE VERTEX SHADER:\n%s\n", infoLog);
+        std::exit(EXIT_FAILURE);
+    }
+
+    // --- Compilazione Fragment Shader ---
+    GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragment_shader, 1, &fs_src, NULL);
+    glCompileShader(fragment_shader);
+
+    // Controllo errori Fragment Shader
+    glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(fragment_shader, 512, NULL, infoLog);
+        std::fprintf(stderr, "ERRORE COMPILAZIONE FRAGMENT SHADER:\n%s\n", infoLog);
+        std::exit(EXIT_FAILURE);
+    }
+
+    // --- Creazione Programma e Attachment ---
+    GLuint program_shader = glCreateProgram();
+    glAttachShader(program_shader, vertex_shader);
+    glAttachShader(program_shader, fragment_shader);
+
+    // Una volta associati, i singoli shader possono essere eliminati
+    // per liberare memoria (il programma mantiene la sua copia interna)
+    glDeleteShader(vertex_shader);
+    glDeleteShader(fragment_shader);
+
+    return program_shader;
+}
+
+int main(int argc, char **argv)
+{
+    // inizializzo la finestra
+    GLFWwindow *window = start_window(800, 800, "MY_DVD_CUBE");
+    if (window == nullptr)
+        return EXIT_FAILURE;
+
+    // ====== configurazione coordinate colore indici di lettua e disegno ===
+    GLuint pos_colBuffer, indexBuffer;            // vbo e ebo
+    GLuint positionAttribIndex, colorAttribIndex; // indici attributi
+
+    GLuint vao = setup_geometry(pos_colBuffer, indexBuffer, positionAttribIndex, colorAttribIndex);
+
+    // ====== Creo il programma shader (vertex e fragment shader) ===========
+    MyShaders shaders;
+    GLuint program_shader = create_shader_program(shaders.vertex, shaders.fragment);
+    // linking e verifica
+    if (link_shader_program(program_shader) != 0)
+    {
+        // Se il link fallisce, stampiamo un errore (giï¿½ fatto nella funzione) e chiudiamo tutto in modo pulito.
+        glfwTerminate();
+        return EXIT_FAILURE;
+    }
+
+    // Recupero della locazione della variabile uniform 'uDelta'
+    GLint loc = glGetUniformLocation(program_shader, shaders.uOff);
+
+    // Controllo finale per verificare che non ci siano stati errori OpenGL durante il setup
+    check_gl_errors(__LINE__, __FILE__);
+
+    // ====== Variabili per l'animazione del movimento
+    float posX = 0.0f, posY = 0.0f;        // Posizione attuale (offset)
+    float speedX = 0.01f, speedY = 0.007f; // Velocitï¿½ diverse per non farlo andare solo in diagonale
+
+    // Impostazione del colore di pulizia dello schermo (Grigio scuro)
+    glClearColor(0.2, 0.2, 0.2, 1);
+
+    // ====== Loop principale di rendering
+    while (!glfwWindowShouldClose(window))
+    {
+        // Mi preparo ad aggiornare la posizione
+        // Rimbalza sull'asse X (sinistra -1.0f, destra 0.5f)
+        if (posX < -0.75f || posX > 0.75f)
+        {
+            speedX = -speedX;
         }
-        // Se il tasto viene rilasciato, resettiamo la variabile
-        else if (currentSState == GLFW_RELEASE) {
-            sKeyPressed = false;
+
+        // Rimbalza sull'asse Y (sotto -1.0f, sopra 0.5f)
+        if (posY < -0.75f || posY > 0.75f)
+        {
+            speedY = -speedY;
         }
+
+        // con speedX == speedY abbiamo un movimento piu semplice
+        posX += speedX;
+        posY += speedY;
+
+        // Aggiornamento della variabile uniform nello shader
+        glUniform2f(loc, posX, posY);
+
+        // Pulizia del buffer del colore e del buffer di profonditï¿½
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Disegno degli elementi usando l'Index Buffer (disegna i segmenti che formano il quadrato)
+        glBindVertexArray(vao);
+        glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_INT, NULL);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
+    // Pulizia delle risorse GLFW prima della chiusura
+    glDeleteVertexArrays(1, &vao);
+    glDeleteBuffers(1, &pos_colBuffer);
+    glDeleteBuffers(1, &indexBuffer);
+    glDeleteProgram(program_shader);
+
     glfwTerminate();
+
     return 0;
 }
